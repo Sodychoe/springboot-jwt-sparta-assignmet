@@ -9,11 +9,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.haein.jwt.controller.dto.request.LoginRequest;
 import com.haein.jwt.controller.dto.request.SignupRequest;
 import com.haein.jwt.controller.exception.ErrorCode;
 import com.haein.jwt.controller.exception.ServiceException;
 import com.haein.jwt.fixture.UserDummy;
 import com.haein.jwt.service.UserService;
+import com.haein.jwt.service.dto.response.LoginResponseDto;
 import com.haein.jwt.service.dto.response.SignupResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -75,6 +77,7 @@ public class UserControllerTest {
       assertThat(errorField).isNotNull();
       assertThat(errorField.get("code").asText()).isEqualTo("USER_ALREADY_EXISTS");
       assertThat(errorField.get("message").asText()).isEqualTo("이미 가입된 사용자입니다.");
+
     }
 
 
@@ -116,7 +119,7 @@ public class UserControllerTest {
     @DisplayName("로그인 정보가 잘못되어 로그인에 실패하면 401 Unauthorized 상태의 응답을 반환한다")
     void givenLoginRequest_whenFail_then401unauthorized() throws Exception {
       // given
-      Loginrequest wrongLoginRequest = new Loginrequest("wrongUsername", "wrongPassword");
+      LoginRequest wrongLoginRequest = new LoginRequest("wrongUsername", "wrongPassword");
 
       given(userService.login(any())).willThrow(
           ServiceException.from(ErrorCode.INVALID_CREDENTIALS));
@@ -147,9 +150,8 @@ public class UserControllerTest {
           userDummy.getAlreadyExistingUser().password()
       );
 
-      given(userService.login(any())).willReturn(new LoginResponse(
-          normalLoginRequest.username(),
-          normalLoginRequest.password()
+      given(userService.login(any())).willReturn(new LoginResponseDto(
+          "token"
       ));
 
       // when
@@ -163,8 +165,7 @@ public class UserControllerTest {
       String content = result.getResponse().getContentAsString();
       JsonNode body = objectMapper.readTree(content);
 
-      assertThat(body.get("username").asText()).isEqualTo(normalLoginRequest.username());
-      assertThat(body.get("password").asText()).isEqualTo(normalLoginRequest.password());
+      assertThat(body.get("token").asText()).isEqualTo("token");
     }
   }
 }
