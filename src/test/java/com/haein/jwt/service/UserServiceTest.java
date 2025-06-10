@@ -2,11 +2,11 @@ package com.haein.jwt.service;
 
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.then;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import com.haein.jwt.fixture.service.ServiceDtoDummy;
+import com.haein.jwt.repository.UserRepository;
+import com.haein.jwt.repository.UserRepositoryStub;
 import com.haein.jwt.service.dto.request.SignupRequestDto;
 import com.haein.jwt.service.dto.response.SignupResponseDto;
 import com.haein.jwt.service.exception.ErrorCode;
@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 public class UserServiceTest {
 
   UserService sut;
+
   UserRepository stub;
 
   ServiceDtoDummy userDummy = ServiceDtoDummy.init();
@@ -38,12 +39,11 @@ public class UserServiceTest {
       // given
       SignupRequestDto existingUser = userDummy.getAlreadyExistingUser();
 
-      // when
-      sut.signup(existingUser);
+      // when & then
+      assertThatThrownBy(() -> sut.signup(existingUser))
+          .isInstanceOf(ServiceException.class)
+          .hasMessage(ErrorCode.USER_ALREADY_EXISTS.getMessage());
 
-      // then
-      assertThrows(ServiceException.class, () -> sut.signup(existingUser),
-          ErrorCode.USER_ALREADY_EXISTS.getMessage());
     }
 
     @Test
@@ -59,7 +59,6 @@ public class UserServiceTest {
       assertThat(dto.username()).isEqualTo(newUser.username());
       assertThat(dto.password()).isEqualTo(newUser.password());
       assertThat(dto.nickname()).isEqualTo(newUser.nickname());
-      then(stub).should().save(any(User.class));
     }
   }
 }
