@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haein.jwt.controller.dto.request.LoginRequest;
 import com.haein.jwt.controller.dto.request.SignupRequest;
-import com.haein.jwt.fixture.UserDummy;
+import com.haein.jwt.fixture.controller.ControllerDtoDummy;
 import com.haein.jwt.service.UserService;
 import com.haein.jwt.service.dto.response.LoginResponseDto;
 import com.haein.jwt.service.dto.response.SignupResponseDto;
@@ -45,7 +45,7 @@ public class UserControllerTest {
   @Autowired
   MockMvc mvc;
 
-  UserDummy userDummy = UserDummy.init();
+  ControllerDtoDummy userDummy = ControllerDtoDummy.init();
 
   ObjectMapper objectMapper = new ObjectMapper()
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -89,6 +89,7 @@ public class UserControllerTest {
       SignupRequest newUser = userDummy.getNewSignupUserRequest();
 
       given(userService.signup(any())).willReturn(new SignupResponseDto(
+          1L,
           newUser.username(),
           newUser.password(),
           newUser.nickname()
@@ -105,6 +106,7 @@ public class UserControllerTest {
       String content = result.getResponse().getContentAsString();
       JsonNode body = objectMapper.readTree(content);
 
+      assertThat(body.get("id").asLong()).isEqualTo(1L);
       assertThat(body.get("username").asText()).isEqualTo(newUser.username());
       assertThat(body.get("password").asText()).isEqualTo(newUser.password());
       assertThat(body.get("nickname").asText()).isEqualTo(newUser.nickname());

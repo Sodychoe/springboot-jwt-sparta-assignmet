@@ -1,18 +1,18 @@
-package com.haein.jwt.fixture;
+package com.haein.jwt.fixture.controller;
 
 import com.haein.jwt.controller.dto.request.SignupRequest;
 
-public class UserDummy {
+public class ControllerDtoDummy {
   private final SignupRequest newUser;
   private final SignupRequest existingUser;
 
-  public UserDummy(SignupRequest newUser, SignupRequest existingUser) {
+  public ControllerDtoDummy(SignupRequest newUser, SignupRequest existingUser) {
     this.newUser = newUser;
     this.existingUser = existingUser;
   }
 
-  public static UserDummy init() {
-    return new UserDummy(
+  public static ControllerDtoDummy init() {
+    return new ControllerDtoDummy(
         new SignupRequest("newUser", "1234test", "newNickname"),
         new SignupRequest("existingUser", "1234test", "existingNickname")
     );
