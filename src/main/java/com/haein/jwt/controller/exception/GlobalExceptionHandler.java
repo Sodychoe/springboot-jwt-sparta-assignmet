@@ -1,5 +1,6 @@
 package com.haein.jwt.controller.exception;
 
+import com.haein.jwt.security.JwtException;
 import com.haein.jwt.service.exception.ServiceException;
 import java.nio.charset.StandardCharsets;
 import org.springframework.http.MediaType;
@@ -14,6 +15,13 @@ public class GlobalExceptionHandler {
   public ResponseEntity<CommonErrorResponse> handleServiceException(ServiceException e) {
     return ResponseEntity.status(e.getStatus())
         .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
-        .body(CommonErrorResponse.of(e.getErrorCode()));
+        .body(CommonErrorResponse.of(e.getServiceErrorCode()));
+  }
+
+  @ExceptionHandler(value = {JwtException.class})
+  public ResponseEntity<CommonErrorResponse> handleJwtException(JwtException e) {
+    return ResponseEntity.status(e.getStatus())
+        .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+        .body(CommonErrorResponse.of(e.getCode()));
   }
 }

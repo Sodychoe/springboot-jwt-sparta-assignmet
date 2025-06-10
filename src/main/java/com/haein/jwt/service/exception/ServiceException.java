@@ -5,17 +5,17 @@ import lombok.Getter;
 @Getter
 public class ServiceException extends RuntimeException {
 
-  private final ErrorCode errorCode;
+  private final ServiceErrorCode serviceErrorCode;
   private final int status;
 
-  private ServiceException(ErrorCode errorCode, int status) {
-    super(errorCode.getMessage());
-    this.errorCode = errorCode;
+  private ServiceException(ServiceErrorCode serviceErrorCode, int status) {
+    super(serviceErrorCode.getMessage());
+    this.serviceErrorCode = serviceErrorCode;
     this.status = status;
   }
 
-  public static ServiceException from(ErrorCode errorCode) {
-    return new ServiceException(errorCode, errorCode.getStatus());
+  public static ServiceException from(ServiceErrorCode serviceErrorCode) {
+    return new ServiceException(serviceErrorCode, serviceErrorCode.getStatus());
   }
 
 }

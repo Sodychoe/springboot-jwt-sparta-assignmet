@@ -15,7 +15,7 @@ import com.haein.jwt.fixture.controller.ControllerDtoDummy;
 import com.haein.jwt.service.UserService;
 import com.haein.jwt.service.dto.response.LoginResponseDto;
 import com.haein.jwt.service.dto.response.SignupResponseDto;
-import com.haein.jwt.service.exception.ErrorCode;
+import com.haein.jwt.service.exception.ServiceErrorCode;
 import com.haein.jwt.service.exception.ServiceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -60,7 +60,7 @@ public class UserControllerTest {
       SignupRequest existingUser = userDummy.getAlreadyExistingUser();
 
       given(userService.signup(any())).willThrow(
-          ServiceException.from(ErrorCode.USER_ALREADY_EXISTS));
+          ServiceException.from(ServiceErrorCode.USER_ALREADY_EXISTS));
 
       // when
       MvcResult result = mvc.perform(post("/api/v1/users/signup")
@@ -124,7 +124,7 @@ public class UserControllerTest {
       LoginRequest wrongLoginRequest = new LoginRequest("wrongUsername", "wrongPassword");
 
       given(userService.login(any())).willThrow(
-          ServiceException.from(ErrorCode.INVALID_CREDENTIALS));
+          ServiceException.from(ServiceErrorCode.INVALID_CREDENTIALS));
 
       // when
       MvcResult result = mvc.perform(post("/api/v1/users/login")
