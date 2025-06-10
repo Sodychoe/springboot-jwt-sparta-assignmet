@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haein.jwt.controller.dto.request.LoginRequest;
 import com.haein.jwt.controller.dto.request.SignupRequest;
-import com.haein.jwt.fixture.UserDummy;
+import com.haein.jwt.fixture.controller.ControllerDtoDummy;
 import com.haein.jwt.service.UserService;
 import com.haein.jwt.service.dto.response.LoginResponseDto;
 import com.haein.jwt.service.dto.response.SignupResponseDto;
@@ -45,7 +45,7 @@ public class UserControllerTest {
   @Autowired
   MockMvc mvc;
 
-  UserDummy userDummy = UserDummy.init();
+  ControllerDtoDummy userDummy = ControllerDtoDummy.init();
 
   ObjectMapper objectMapper = new ObjectMapper()
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
