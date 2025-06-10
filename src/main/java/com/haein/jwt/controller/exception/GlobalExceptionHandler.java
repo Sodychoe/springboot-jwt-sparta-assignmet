@@ -1,5 +1,6 @@
 package com.haein.jwt.controller.exception;
 
+import com.haein.jwt.service.exception.ServiceException;
 import java.nio.charset.StandardCharsets;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

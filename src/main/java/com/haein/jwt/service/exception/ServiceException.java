@@ -1,4 +1,4 @@
-package com.haein.jwt.controller.exception;
+package com.haein.jwt.service.exception;
 
 import lombok.Getter;
 

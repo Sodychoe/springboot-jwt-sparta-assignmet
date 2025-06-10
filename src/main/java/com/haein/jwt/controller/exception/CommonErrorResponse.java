@@ -1,5 +1,7 @@
 package com.haein.jwt.controller.exception;
 
+import com.haein.jwt.service.exception.ErrorCode;
+
 public record CommonErrorResponse(Error error) {
 
   public static CommonErrorResponse of(ErrorCode errorCode) {
@@ -10,6 +12,7 @@ public record CommonErrorResponse(Error error) {
       String code,
       String message
   ) {
+
   }
 
 }
