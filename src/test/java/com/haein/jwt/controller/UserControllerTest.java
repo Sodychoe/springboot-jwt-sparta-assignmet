@@ -114,22 +114,57 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("로그인 정보가 잘못되어 로그인에 실패하면 401 Unauthorized 상태의 응답을 반환한다")
-    void givenLoginRequest_whenFail_then401unauthorized() {
+    void givenLoginRequest_whenFail_then401unauthorized() throws Exception {
       // given
+      Loginrequest wrongLoginRequest = new Loginrequest("wrongUsername", "wrongPassword");
+
+      given(userService.login(any())).willThrow(
+          ServiceException.from(ErrorCode.INVALID_CREDENTIALS));
 
       // when
+      MvcResult result = mvc.perform(post("/api/v1/users/login")
+              .content(objectMapper.writeValueAsString(wrongLoginRequest))
+              .contentType(MediaType.APPLICATION_JSON))
+          .andExpect(status().isUnauthorized())
+          .andReturn();
 
       // then
+      String content = result.getResponse().getContentAsString();
+      JsonNode body = objectMapper.readTree(content);
+      JsonNode errorField = body.get("error");
+
+      assertThat(errorField).isNotNull();
+      assertThat(errorField.get("code").asText()).isEqualTo("INVALID_CREDENTIALS");
+      assertThat(errorField.get("message").asText()).isEqualTo("아이디 또는 비밀번호가 올바르지 않습니다.");
     }
 
     @Test
     @DisplayName("올바른 사용자 이름과 비밀번호를 전달하면 로그인에 성공하면 200 OK 상태의 응답을 반환한다")
-    void givenLoginRequest_whenSuccess_then200ok() {
+    void givenLoginRequest_whenSuccess_then200ok() throws Exception {
       // given
+      LoginRequest normalLoginRequest = new LoginRequest(
+          userDummy.getAlreadyExistingUser().username(),
+          userDummy.getAlreadyExistingUser().password()
+      );
+
+      given(userService.login(any())).willReturn(new LoginResponse(
+          normalLoginRequest.username(),
+          normalLoginRequest.password()
+      ));
 
       // when
+      MvcResult result = mvc.perform(post("/api/v1/users/login")
+              .content(objectMapper.writeValueAsString(normalLoginRequest))
+              .contentType(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andReturn();
 
       // then
+      String content = result.getResponse().getContentAsString();
+      JsonNode body = objectMapper.readTree(content);
+
+      assertThat(body.get("username").asText()).isEqualTo(normalLoginRequest.username());
+      assertThat(body.get("password").asText()).isEqualTo(normalLoginRequest.password());
     }
   }
 }
