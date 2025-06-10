@@ -9,11 +9,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.haein.jwt.controller.dto.request.LoginRequest;
 import com.haein.jwt.controller.dto.request.SignupRequest;
 import com.haein.jwt.controller.exception.ErrorCode;
 import com.haein.jwt.controller.exception.ServiceException;
 import com.haein.jwt.fixture.UserDummy;
 import com.haein.jwt.service.UserService;
+import com.haein.jwt.service.dto.response.LoginResponseDto;
 import com.haein.jwt.service.dto.response.SignupResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -52,6 +54,34 @@ public class UserControllerTest {
   class Signup {
 
     @Test
+    @DisplayName("이미 가입된 사용자라면 409 Conflict 상태와 에러 응답을 반환한다")
+    void givenSignupRequest_whenAlreadyExists_then409conflict() throws Exception {
+      // given
+      SignupRequest existingUser = userDummy.getAlreadyExistingUser();
+
+      given(userService.signup(any())).willThrow(
+          ServiceException.from(ErrorCode.USER_ALREADY_EXISTS));
+
+      // when
+      MvcResult result = mvc.perform(post("/api/v1/users/signup")
+              .content(objectMapper.writeValueAsString(existingUser))
+              .contentType(MediaType.APPLICATION_JSON))
+          .andExpect(status().isConflict())
+          .andReturn();
+
+      // then
+      String content = result.getResponse().getContentAsString();
+      JsonNode body = objectMapper.readTree(content);
+      JsonNode errorField = body.get("error");
+
+      assertThat(errorField).isNotNull();
+      assertThat(errorField.get("code").asText()).isEqualTo("USER_ALREADY_EXISTS");
+      assertThat(errorField.get("message").asText()).isEqualTo("이미 가입된 사용자입니다.");
+
+    }
+
+
+    @Test
     @DisplayName("사용자 이름, 비밀번호, 닉네임 정보를 전달하여 회원가입에 성공하면 200 OK 상태의 응답을 반환한다")
     void givenSignupRequest_whenSuccess_then200ok()
         throws Exception {
@@ -80,20 +110,25 @@ public class UserControllerTest {
       assertThat(body.get("nickname").asText()).isEqualTo(newUser.nickname());
     }
 
-    @Test
-    @DisplayName("이미 가입된 사용자라면 409 Conflict 상태와 에러 응답을 반환한다")
-    void givenSignupRequest_whenAlreadyExists_then409conflict() throws Exception {
-      // given
-      SignupRequest existingUser = userDummy.getAlreadyExistingUser();
+  }
 
-      given(userService.signup(any())).willThrow(
-          ServiceException.from(ErrorCode.USER_ALREADY_EXISTS));
+  @Nested
+  class Login {
+
+    @Test
+    @DisplayName("로그인 정보가 잘못되어 로그인에 실패하면 401 Unauthorized 상태의 응답을 반환한다")
+    void givenLoginRequest_whenFail_then401unauthorized() throws Exception {
+      // given
+      LoginRequest wrongLoginRequest = new LoginRequest("wrongUsername", "wrongPassword");
+
+      given(userService.login(any())).willThrow(
+          ServiceException.from(ErrorCode.INVALID_CREDENTIALS));
 
       // when
-      MvcResult result = mvc.perform(post("/api/v1/users/signup")
-              .content(objectMapper.writeValueAsString(existingUser))
+      MvcResult result = mvc.perform(post("/api/v1/users/login")
+              .content(objectMapper.writeValueAsString(wrongLoginRequest))
               .contentType(MediaType.APPLICATION_JSON))
-          .andExpect(status().isConflict())
+          .andExpect(status().isUnauthorized())
           .andReturn();
 
       // then
@@ -102,8 +137,35 @@ public class UserControllerTest {
       JsonNode errorField = body.get("error");
 
       assertThat(errorField).isNotNull();
-      assertThat(errorField.get("code").asText()).isEqualTo("USER_ALREADY_EXISTS");
-      assertThat(errorField.get("message").asText()).isEqualTo("이미 가입된 사용자입니다.");
+      assertThat(errorField.get("code").asText()).isEqualTo("INVALID_CREDENTIALS");
+      assertThat(errorField.get("message").asText()).isEqualTo("아이디 또는 비밀번호가 올바르지 않습니다.");
+    }
+
+    @Test
+    @DisplayName("올바른 사용자 이름과 비밀번호를 전달하면 로그인에 성공하면 200 OK 상태의 응답을 반환한다")
+    void givenLoginRequest_whenSuccess_then200ok() throws Exception {
+      // given
+      LoginRequest normalLoginRequest = new LoginRequest(
+          userDummy.getAlreadyExistingUser().username(),
+          userDummy.getAlreadyExistingUser().password()
+      );
+
+      given(userService.login(any())).willReturn(new LoginResponseDto(
+          "token"
+      ));
+
+      // when
+      MvcResult result = mvc.perform(post("/api/v1/users/login")
+              .content(objectMapper.writeValueAsString(normalLoginRequest))
+              .contentType(MediaType.APPLICATION_JSON))
+          .andExpect(status().isOk())
+          .andReturn();
+
+      // then
+      String content = result.getResponse().getContentAsString();
+      JsonNode body = objectMapper.readTree(content);
+
+      assertThat(body.get("token").asText()).isEqualTo("token");
     }
   }
 }
