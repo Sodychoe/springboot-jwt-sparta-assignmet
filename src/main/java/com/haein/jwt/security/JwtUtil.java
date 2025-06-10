@@ -1,9 +1,13 @@
 package com.haein.jwt.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -44,6 +48,22 @@ public class JwtUtil {
         .compact();
 
     return BEARER_PREFIX + token;
+  }
+
+  public boolean validateToken(String token) {
+    try {
+      Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+      return true;
+
+    } catch (SecurityException | MalformedJwtException | SignatureException e) {
+      throw JwtException.from(SecurityErrorCode.INVALID_SIGNATURE);
+    } catch (ExpiredJwtException e) {
+      throw JwtException.from(SecurityErrorCode.ACCESS_TOKEN_EXPIRED);
+    } catch (UnsupportedJwtException e) {
+      throw JwtException.from(SecurityErrorCode.UNSUPPORTED_TOKEN);
+    } catch (IllegalArgumentException e) {
+      throw JwtException.from(SecurityErrorCode.EMPTY_TOKEN);
+    }
   }
 
   private String removeToken(String token) {
