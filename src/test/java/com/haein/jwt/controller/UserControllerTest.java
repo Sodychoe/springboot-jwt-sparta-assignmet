@@ -89,6 +89,7 @@ public class UserControllerTest {
       SignupRequest newUser = userDummy.getNewSignupUserRequest();
 
       given(userService.signup(any())).willReturn(new SignupResponseDto(
+          1L,
           newUser.username(),
           newUser.password(),
           newUser.nickname()
@@ -105,6 +106,7 @@ public class UserControllerTest {
       String content = result.getResponse().getContentAsString();
       JsonNode body = objectMapper.readTree(content);
 
+      assertThat(body.get("id").asLong()).isEqualTo(1L);
       assertThat(body.get("username").asText()).isEqualTo(newUser.username());
       assertThat(body.get("password").asText()).isEqualTo(newUser.password());
       assertThat(body.get("nickname").asText()).isEqualTo(newUser.nickname());
