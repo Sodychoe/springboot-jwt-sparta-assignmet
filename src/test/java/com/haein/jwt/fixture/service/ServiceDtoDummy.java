@@ -1,29 +1,48 @@
 package com.haein.jwt.fixture.service;
 
+import com.haein.jwt.service.dto.request.LoginRequestDto;
 import com.haein.jwt.service.dto.request.SignupRequestDto;
 
 public class ServiceDtoDummy {
 
-  private final SignupRequestDto newUser;
-  private final SignupRequestDto existingUser;
+  private final SignupRequestDto nonExistingSignupUser;
+  private final SignupRequestDto existingSignupUser;
 
-  public ServiceDtoDummy(SignupRequestDto newUser, SignupRequestDto existingUser) {
-    this.newUser = newUser;
-    this.existingUser = existingUser;
+  private final LoginRequestDto nonExistingLoginUser;
+  private final LoginRequestDto existingLoginUser;
+
+  public ServiceDtoDummy(SignupRequestDto nonExistingSignupUser,
+      SignupRequestDto existingSignupUser,
+      LoginRequestDto nonExistingLoginUser, LoginRequestDto existingLoginUser) {
+    this.nonExistingSignupUser = nonExistingSignupUser;
+    this.existingSignupUser = existingSignupUser;
+    this.nonExistingLoginUser = nonExistingLoginUser;
+    this.existingLoginUser = existingLoginUser;
   }
 
   public static ServiceDtoDummy init() {
     return new ServiceDtoDummy(
-        new SignupRequestDto("newUser", "1234test", "newNickname"),
-        new SignupRequestDto("existingUser", "1234test", "existingNickname")
+        new SignupRequestDto("nonExistingUser", "1234test", "newNickname"),
+        new SignupRequestDto("existingUser", "1234test", "existingNickname"),
+
+        new LoginRequestDto("nonExistingUser", "1234test"),
+        new LoginRequestDto("existingUser", "1234test")
     );
   }
 
-  public SignupRequestDto getNewSignupUserRequest() {
-    return newUser;
+  public SignupRequestDto getNonExistingSignupUser() {
+    return nonExistingSignupUser;
   }
 
-  public SignupRequestDto getAlreadyExistingUser() {
-    return existingUser;
+  public SignupRequestDto getAlreadyExistingSignupUser() {
+    return existingSignupUser;
+  }
+
+  public LoginRequestDto getNonExistingLoginUser() {
+    return nonExistingLoginUser;
+  }
+
+  public LoginRequestDto getExistingLoginUser() {
+    return existingLoginUser;
   }
 }
