@@ -1,6 +1,7 @@
-package com.haein.jwt.repository;
+package com.haein.jwt.fixture.repository;
 
 import com.haein.jwt.domain.User;
+import com.haein.jwt.repository.UserRepository;
 import java.util.List;
 
 public class UserRepositoryStub implements UserRepository {

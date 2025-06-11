@@ -4,12 +4,12 @@ package com.haein.jwt.service;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
+import com.haein.jwt.fixture.repository.UserRepositoryStub;
 import com.haein.jwt.fixture.service.ServiceDtoDummy;
 import com.haein.jwt.repository.UserRepository;
-import com.haein.jwt.repository.UserRepositoryStub;
 import com.haein.jwt.service.dto.request.SignupRequestDto;
 import com.haein.jwt.service.dto.response.SignupResponseDto;
-import com.haein.jwt.service.exception.ErrorCode;
+import com.haein.jwt.service.exception.ServiceErrorCode;
 import com.haein.jwt.service.exception.ServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,7 +42,7 @@ public class UserServiceTest {
       // when & then
       assertThatThrownBy(() -> sut.signup(existingUser))
           .isInstanceOf(ServiceException.class)
-          .hasMessage(ErrorCode.USER_ALREADY_EXISTS.getMessage());
+          .hasMessage(ServiceErrorCode.USER_ALREADY_EXISTS.getMessage());
 
     }
 
@@ -59,6 +59,31 @@ public class UserServiceTest {
       assertThat(dto.username()).isEqualTo(newUser.username());
       assertThat(dto.password()).isEqualTo(newUser.password());
       assertThat(dto.nickname()).isEqualTo(newUser.nickname());
+    }
+  }
+
+  @Nested
+  class Login {
+
+    @Test
+    @DisplayName("존재하지 않는 사용자의 로그인 정보를 받으면 INVALID_CREDENTIALS 에러 코드를 담은 커스텀 에러를 던진다")
+    void givenNonExistingUserDto_whenLogin_thenThrowServiceException() {
+      // given
+
+      // when & then
+      assertThatThrownBy(() -> sut.login())
+          .isInstanceOf(ServiceException.class)
+          .hasMessage(ServiceErrorCode.INVALID_CREDENTIALS.getMessage());
+    }
+
+    @Test
+    @DisplayName("가입된 사용자의 로그인 정보를 받으면 로그인이 성공하고 엑세스 토큰을 발급한다")
+    void givenExistingUserDto_whenLogin_thenReturnAccessToken() {
+      // given
+
+      // when
+
+      // then
     }
   }
 }
