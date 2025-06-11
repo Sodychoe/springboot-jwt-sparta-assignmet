@@ -3,34 +3,46 @@ package com.haein.jwt.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 import com.haein.jwt.fixture.repository.UserRepositoryStub;
 import com.haein.jwt.fixture.service.ServiceDtoDummy;
-import com.haein.jwt.repository.UserRepository;
+import com.haein.jwt.security.JwtUtil;
 import com.haein.jwt.service.dto.request.LoginRequestDto;
 import com.haein.jwt.service.dto.request.SignupRequestDto;
 import com.haein.jwt.service.dto.response.LoginResponseDto;
 import com.haein.jwt.service.dto.response.SignupResponseDto;
 import com.haein.jwt.service.exception.ServiceErrorCode;
 import com.haein.jwt.service.exception.ServiceException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
+  @InjectMocks
   UserService sut;
 
-  UserRepository stub;
+  @Spy
+  UserRepositoryStub stub;
+
+  @Mock
+  JwtUtil jwtUtil;
+
+  @Spy
+  PasswordEncoder passwordEncoder;
 
   ServiceDtoDummy userDummy = ServiceDtoDummy.init();
 
-  @BeforeEach
-  void setUp() {
-    stub = new UserRepositoryStub();
-    sut = new UserService(stub);
-  }
 
   @Nested
   class Signup {
@@ -53,6 +65,7 @@ public class UserServiceTest {
     void givenNewSignupDto_whenSignup_thenSaveAndReturnsDto() {
       // given
       SignupRequestDto newUser = userDummy.getNonExistingSignupUser();
+      given(passwordEncoder.encode(anyString())).willReturn(newUser.password());
 
       // when
       SignupResponseDto dto = sut.signup(newUser);
@@ -61,6 +74,7 @@ public class UserServiceTest {
       assertThat(dto.username()).isEqualTo(newUser.username());
       assertThat(dto.password()).isEqualTo(newUser.password());
       assertThat(dto.nickname()).isEqualTo(newUser.nickname());
+      then(passwordEncoder).should().encode(anyString());
     }
   }
 
@@ -84,12 +98,15 @@ public class UserServiceTest {
     void givenExistingUserDto_whenLogin_thenReturnAccessToken() {
       // given
       LoginRequestDto existingLoginUser = userDummy.getExistingLoginUser();
+      given(passwordEncoder.matches(anyString(), anyString())).willReturn(Boolean.TRUE);
+      given(jwtUtil.createAccessToken(anyString(), anyString())).willReturn("Normal Token");
 
       // when
       LoginResponseDto dto = sut.login(existingLoginUser);
 
       // then
       assertThat(dto.token()).isNotNull();
+      then(jwtUtil).should().createAccessToken(anyString(), anyString());
     }
   }
 }
