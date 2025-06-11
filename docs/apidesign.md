@@ -98,10 +98,13 @@ HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
 
 {
-  "data": {
-    "item_id": "{itemId}",
-    "stock": {stock}
-  }
+  "username": "JIN HO",
+  "nickname": "Mentos",
+  "roles": [
+    {
+      "role": "Admin"
+    }
+  ]
 }
 ```
 
