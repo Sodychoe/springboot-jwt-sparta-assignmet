@@ -22,7 +22,7 @@ public class UserRepositoryStub implements UserRepository {
         .nickname(user.getNickname())
         .build();
 
-    savedUser.setId(2L);
+    savedUser.setId(3L);
 
     return savedUser;
   }
@@ -44,6 +44,16 @@ public class UserRepositoryStub implements UserRepository {
         .build();
 
     existingUser.setId(1L);
-    return List.of(existingUser);
+
+    User adminRuser = User.builder()
+        .username("adminUser")
+        .password("1234test")
+        .nickname("adminNickname")
+        .build();
+
+    adminRuser.authorizeAdminRole();
+    adminRuser.setId(2L);
+
+    return List.of(existingUser, adminRuser);
   }
 }
