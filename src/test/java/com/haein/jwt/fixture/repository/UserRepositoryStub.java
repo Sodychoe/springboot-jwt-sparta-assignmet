@@ -3,6 +3,7 @@ package com.haein.jwt.fixture.repository;
 import com.haein.jwt.domain.User;
 import com.haein.jwt.repository.UserRepository;
 import java.util.List;
+import java.util.Optional;
 
 public class UserRepositoryStub implements UserRepository {
 
@@ -24,6 +25,15 @@ public class UserRepositoryStub implements UserRepository {
     savedUser.setId(2L);
 
     return savedUser;
+  }
+
+  @Override
+  public Optional<User> findByUsername(String username) {
+    if (entities.get(0).getUsername().equals(username)) {
+      return Optional.of(entities.get(0));
+    }
+
+    return Optional.empty();
   }
 
   private List<User> createDummyData() {

@@ -6,7 +6,7 @@ import com.haein.jwt.service.dto.request.LoginRequestDto;
 import com.haein.jwt.service.dto.request.SignupRequestDto;
 import com.haein.jwt.service.dto.response.LoginResponseDto;
 import com.haein.jwt.service.dto.response.SignupResponseDto;
-import com.haein.jwt.service.exception.ErrorCode;
+import com.haein.jwt.service.exception.ServiceErrorCode;
 import com.haein.jwt.service.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class UserService {
 
   public SignupResponseDto signup(SignupRequestDto applicationDto) {
     if (validateExistingUser(applicationDto)) {
-      throw ServiceException.from(ErrorCode.USER_ALREADY_EXISTS);
+      throw ServiceException.from(ServiceErrorCode.USER_ALREADY_EXISTS);
     }
 
     User user = User.builder()

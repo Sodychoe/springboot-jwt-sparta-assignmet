@@ -23,6 +23,10 @@ public class User {
     this.role = UserRole.NORMAL;
   }
 
+  public String getRole() {
+    return role.getRole();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
