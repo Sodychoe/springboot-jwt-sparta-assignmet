@@ -42,7 +42,7 @@ public class UserService {
     String password = dto.password();
 
     User user = userRepository.findByUsername(username)
-        .orElseThrow(() -> ServiceException.from(ServiceErrorCode.INVALID_CREDENTIALS));
+        .orElseThrow(() -> ServiceException.from(ServiceErrorCode.USER_NOT_FOUND));
 
     if (!passwordEncoder.matches(password, user.getPassword())) {
       throw ServiceException.from(ServiceErrorCode.INVALID_CREDENTIALS);
