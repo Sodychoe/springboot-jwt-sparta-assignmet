@@ -45,4 +45,11 @@ public class ServiceDtoDummy {
   public LoginRequestDto getExistingLoginUser() {
     return existingLoginUser;
   }
+
+  public LoginRequestDto getWrongPasswordLoginUser() {
+    return new LoginRequestDto(
+        existingLoginUser.username(),
+        "wrongPassword"
+    );
+  }
 }

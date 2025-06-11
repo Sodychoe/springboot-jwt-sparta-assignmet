@@ -82,13 +82,25 @@ public class UserServiceTest {
   class Login {
 
     @Test
-    @DisplayName("존재하지 않는 사용자의 로그인 정보를 받으면 INVALID_CREDENTIALS 에러 코드를 담은 커스텀 에러를 던진다")
+    @DisplayName("존재하지 않는 사용자의 로그인 정보를 받으면 USER_NOT_FOUND 에러 코드를 담은 커스텀 에러를 던진다")
     void givenNonExistingUserDto_whenLogin_thenThrowServiceException() {
       // given
       LoginRequestDto nonExistingLoginUser = userDummy.getNonExistingLoginUser();
 
       // when & then
       assertThatThrownBy(() -> sut.login(nonExistingLoginUser))
+          .isInstanceOf(ServiceException.class)
+          .hasMessage(ServiceErrorCode.USER_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("비밀번호가 맞지 않으면 INVALID_CREDENTIALS 에러 코드를 담은 커스텀 에러를 던진다")
+    void givenWrongPassword_whenLogin_thenThrowServiceException(){
+      // given
+      LoginRequestDto wrongPasswordLoginUser = userDummy.getWrongPasswordLoginUser();
+
+      // when & then
+      assertThatThrownBy(() -> sut.login(wrongPasswordLoginUser))
           .isInstanceOf(ServiceException.class)
           .hasMessage(ServiceErrorCode.INVALID_CREDENTIALS.getMessage());
     }
