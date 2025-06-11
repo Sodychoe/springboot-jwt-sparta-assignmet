@@ -6,7 +6,6 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haein.jwt.controller.dto.request.LoginRequest;
@@ -45,10 +44,11 @@ public class UserControllerTest {
   @Autowired
   MockMvc mvc;
 
+  @Autowired
+  ObjectMapper objectMapper;
+
   ControllerDtoDummy userDummy = ControllerDtoDummy.init();
 
-  ObjectMapper objectMapper = new ObjectMapper()
-      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
   @Nested
   class Signup {
