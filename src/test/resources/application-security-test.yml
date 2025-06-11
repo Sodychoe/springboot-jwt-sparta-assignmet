@@ -1,0 +1,4 @@
+service:
+  jwt:
+    secret-key: UklSRRP0Gcz5jM+dcZdE9ga9boQrkjodNOQg3UjNVTA=
+    access-expiration: 600000
