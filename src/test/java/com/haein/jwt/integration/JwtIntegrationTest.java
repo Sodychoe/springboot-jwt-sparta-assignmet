@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haein.jwt.controller.dto.request.SignupRequest;
 import com.haein.jwt.fixture.controller.ControllerDtoDummy;
+import com.haein.jwt.service.exception.ServiceErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -49,5 +50,14 @@ public class JwtIntegrationTest {
         .andExpect(jsonPath("$.password").exists());
 
     // then
+    // 중복 가입 불가
+    mvc.perform(
+            post("/api/v1/users/signup").content(objectMapper.writeValueAsString(newSignupUserRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.error.code").value(ServiceErrorCode.USER_ALREADY_EXISTS.getCode()))
+        .andExpect(
+            jsonPath("$.error.message").value(ServiceErrorCode.USER_ALREADY_EXISTS.getMessage()));
+
   }
 }
