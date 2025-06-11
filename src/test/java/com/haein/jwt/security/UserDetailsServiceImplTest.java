@@ -43,7 +43,7 @@ class UserDetailsServiceImplTest {
   @DisplayName("이미 존재하는 유저를 유저이름으로 조회하면 성공한다")
   void givenExistingUser_whenLoadUser_thenSuccess() {
     // given
-    SignupRequestDto existingUser = userDummy.getAlreadyExistingUser();
+    SignupRequestDto existingUser = userDummy.getAlreadyExistingSignupUser();
 
     // when
     UserDetails user = sut.loadUserByUsername(existingUser.username());
