@@ -34,7 +34,7 @@ public class JwtUtil {
     return Jwts.parserBuilder()
         .setSigningKey(key)
         .build()
-        .parseClaimsJws(removeToken(token))
+        .parseClaimsJws(removeTokenPrefix(token))
         .getBody();
   }
 
@@ -50,11 +50,9 @@ public class JwtUtil {
     return BEARER_PREFIX + token;
   }
 
-  public boolean validateToken(String token) {
+  public void validateToken(String token) {
     try {
-      Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-      return true;
-
+      Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(removeTokenPrefix(token));
     } catch (SecurityException | MalformedJwtException | SignatureException e) {
       throw JwtException.from(SecurityErrorCode.INVALID_SIGNATURE);
     } catch (ExpiredJwtException e) {
@@ -66,7 +64,7 @@ public class JwtUtil {
     }
   }
 
-  private String removeToken(String token) {
+  private String removeTokenPrefix(String token) {
     if (token.startsWith(BEARER_PREFIX)) {
       return token.substring(BEARER_PREFIX.length());
     }
