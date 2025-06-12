@@ -2,6 +2,7 @@ package com.haein.jwt.fixture.repository;
 
 import com.haein.jwt.domain.User;
 import com.haein.jwt.repository.UserRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +17,12 @@ public class UserRepositoryStub implements UserRepository {
 
   @Override
   public User save(User user) {
+    if (entities.contains(user)) {
+      update(user);
+      return user;
+    }
+
+
     User savedUser = User.builder()
         .username(user.getUsername())
         .password(user.getPassword())
@@ -54,6 +61,24 @@ public class UserRepositoryStub implements UserRepository {
     adminRuser.authorizeAdminRole();
     adminRuser.setId(2L);
 
-    return List.of(existingUser, adminRuser);
+    ArrayList<User> list = new ArrayList<>();
+    list.add(existingUser);
+    list.add(adminRuser);
+
+    return list;
+  }
+
+  @Override
+  public Optional<User> findById(Long userId) {
+    return entities.stream()
+        .filter(user -> user.getId().equals(userId))
+        .findFirst();
+  }
+
+  private void update(User user) {
+    entities.remove(user);
+    entities.add(user);
   }
 }
+
+
