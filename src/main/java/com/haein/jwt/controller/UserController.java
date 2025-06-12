@@ -55,16 +55,6 @@ public class UserController {
       schema = @Schema(implementation = LoginResponse.class),
       mediaType = MediaType.APPLICATION_JSON_VALUE
   ))
-  @ApiResponse(responseCode = "401", description = "아이디 또는 비밀번호가 잘못됨", content = @Content(
-      mediaType = MediaType.APPLICATION_JSON_VALUE, examples = @ExampleObject(
-      value = """
-          {
-            "error": {
-              "code": "INVALID_CREDENTIALS",
-              "message": "아이디 또는 비밀번호가 올바르지 않습니다."
-            }
-          }"""
-  )))
   @PostMapping("/login")
   public ResponseEntity<LoginResponse> login(
       @RequestBody
@@ -72,7 +62,12 @@ public class UserController {
           required = true,
           content = @Content(
               schema = @Schema(implementation = LoginRequest.class),
-              mediaType = MediaType.APPLICATION_JSON_VALUE
+              mediaType = MediaType.APPLICATION_JSON_VALUE,
+              examples = {
+                  @ExampleObject(
+                      name = "관리자 아이디로 로그인",
+                      value = "{\"username\": \"admin\", \"password\": \"admin123\"}")
+              }
           )
       )
       LoginRequest request) {
