@@ -13,8 +13,7 @@ public enum SecurityErrorCode {
   UNSUPPORTED_TOKEN("UNSUPPORTED_TOKEN", "지원하지 않는 JWT 토큰입니다."),
   EMPTY_TOKEN("EMPTY_TOKEN", "토큰이 비어있습니다."),
   MISSING_HEADER("MISSING_HEADER", "Authorization 헤더가 없습니다."),
-  INVALID_PREFIX("INVALID_FORMAT", "Bearer Prefix 를 찾지 못해 파싱에 실패했습니다."),
-  NO_AUTHORIZATION("NO_AUTHORIZATION", "주어진 권한으로 접근할 수 없는 서비스입니다.");
+  INVALID_PREFIX("INVALID_FORMAT", "Bearer Prefix 를 찾지 못해 파싱에 실패했습니다.");
 
 
   private final String code;

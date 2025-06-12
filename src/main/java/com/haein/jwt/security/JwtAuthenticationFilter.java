@@ -26,8 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final UserDetailsService userDetailsService;
   private final HandlerExceptionResolver resolver;
 
-  public JwtAuthenticationFilter(JwtUtil jwtUtil,
-      UserDetailsService userDetailsService,
+  public JwtAuthenticationFilter(JwtUtil jwtUtil, UserDetailsService userDetailsService,
       @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
     this.jwtUtil = jwtUtil;
     this.userDetailsService = userDetailsService;
@@ -57,7 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       filterChain.doFilter(request, response);
     } catch (JwtException e) {
       resolver.resolveException(request, response, null, e);
-      log.error("JWT 인증 실패");
+      log.error("JWT 인증 실패 : uri ={}", request.getRequestURI());
       return;
     }
   }
@@ -65,6 +64,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
     String path = request.getRequestURI();
-    return path.startsWith("/api/v1/users/signup") || path.startsWith("/api/v1/users/login");
+    boolean isAuthenticationAccess =
+        path.startsWith("/api/v1/users/signup") || path.startsWith("/api/v1/users/login");
+    boolean isSwaggerAccess =
+        path.length() == 1 && path.endsWith("/") || path.startsWith("/v3/api-docs")
+            || path.startsWith("/swagger-ui/") || path.startsWith("/swagger-ui/index.html");
+
+    return isAuthenticationAccess || isSwaggerAccess;
   }
 }
