@@ -10,6 +10,7 @@ on:
   workflow_dispatch:
 
 
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -38,10 +39,10 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with gradle
-        run: ./gradlew build
+        run: ./gradlew clean build
         env:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-          JWT_ACCESS_EXPIRATION=600000: ${{secrets.JWT_ACCESS_EXPIRATION }}
+          JWT_ACCESS_EXPIRATION: ${{ secrets.JWT_ACCESS_EXPIRATION }}
 
       - name: make zip
         run: zip -qq -r app.zip .
@@ -50,11 +51,11 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
       - name: Upload to S3
-        run: aws s3 cp s3://my-jwt-bucket-sparta/app.zip
+        run: aws s3 cp app.zip s3://my-jwt-bucket-sparta/app.zip
 
       - name: Aws Code Deploy
         run: aws deploy create-deployment --application-name my-jwt-app-sparta
