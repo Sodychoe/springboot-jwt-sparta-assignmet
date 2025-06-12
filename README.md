@@ -33,7 +33,7 @@ Swagger 를 이용한 API 문서화를 완료하였습니다.
 이 서비스는 현재 Docker-Compose 를 이용하여 AWS EC2 인스턴스에 배포되어 있으며 Nginx 를 이용해
 Https 프로토콜에 대한 리버스 프록싱이 적용되어 있습니다.
 
-- 서비스 주소 : https://barointern-13-haein.p-e.kr
+- 서비스 주소 : https://barointern-13-haein.n-e.kr
 - 로컬 실행 :
     - 프로젝트를 로컬에 내려받아 실행하기 위해선 아래와 같은 `.env` 파일을 설정해야 합니다.
     - 환경변수 설정 후 `./gradlew clean build` 명령어로 jar 파일을 얻을 수 있습니다.
@@ -58,7 +58,7 @@ JWT_ACCESS_EXPIRATION=6000000000
 
 모든 API 스펙은 다음 링크에서 확인하실 수 있습니다.
 
-- Swagger : [API 문서](https://barointern-13-haein.p-e.kr/swagger-ui/index.html)
+- Swagger : [API 문서](https://barointern-13-haein.n-e.kr/swagger-ui/index.html)
 
 ## ⚒️ 구현 중 고민하거나 개선했던 부분들
 
