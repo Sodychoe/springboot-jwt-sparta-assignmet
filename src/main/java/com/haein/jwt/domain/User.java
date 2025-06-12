@@ -27,6 +27,22 @@ public class User {
     return role.getRole();
   }
 
+  public boolean isAdmin() {
+    return role == UserRole.ADMIN;
+  }
+
+  public void authorizeAdminRole() {
+    this.role = UserRole.ADMIN;
+  }
+
+  public void cancelAdminRole() {
+    if (role == UserRole.ADMIN) {
+      this.role = UserRole.NORMAL;
+    }
+
+    throw new IllegalStateException("이 사용자는 관리자가 아닙니다.");
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

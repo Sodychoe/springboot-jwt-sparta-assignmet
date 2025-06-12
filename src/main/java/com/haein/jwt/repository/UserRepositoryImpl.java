@@ -17,6 +17,11 @@ public class UserRepositoryImpl implements UserRepository {
 
   @Override
   public User save(User user) {
+    if (entities.contains(user)) {
+      update(user);
+      return user;
+    }
+
     long id = idGenerator.getAndIncrement();
     user.setId(id);
     entities.add(user);
@@ -35,5 +40,17 @@ public class UserRepositoryImpl implements UserRepository {
     return entities.stream()
         .filter(user -> user.getUsername().equals(username))
         .findFirst();
+  }
+
+  @Override
+  public Optional<User> findById(Long userId) {
+    return entities.stream()
+        .filter(user -> user.getId().equals(userId))
+        .findFirst();
+  }
+
+  private void update(User user) {
+    entities.remove(user);
+    entities.add(user);
   }
 }
