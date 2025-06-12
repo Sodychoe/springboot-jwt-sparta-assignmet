@@ -6,6 +6,9 @@ import com.haein.jwt.controller.dto.response.LoginResponse;
 import com.haein.jwt.controller.dto.response.SignupResponse;
 import com.haein.jwt.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,12 +22,18 @@ public class UserController {
   private final UserService userService;
 
   @PostMapping("/signup")
-  public SignupResponse signup(@RequestBody SignupRequest request) {
-    return SignupResponse.from(userService.signup(request.toApplicationDto(request)));
+  public ResponseEntity<SignupResponse> signup(@RequestBody SignupRequest request) {
+    return ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(SignupResponse.from(userService.signup(request.toApplicationDto(request))));
   }
 
   @PostMapping("/login")
-  public LoginResponse login(@RequestBody LoginRequest request) {
-    return LoginResponse.from(userService.login(request.toApplicationDto(request)));
+  public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+    return ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(LoginResponse.from(userService.login(request.toApplicationDto(request))));
   }
 }
