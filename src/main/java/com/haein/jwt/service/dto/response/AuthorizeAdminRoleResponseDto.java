@@ -12,6 +12,10 @@ public record AuthorizeAdminRoleResponseDto(
     return roles.stream().anyMatch(role -> role.roleName.equals("ROLE_ADMIN"));
   }
 
+  public List<String> getRoles() {
+    return roles.stream().map(Role::roleName).toList();
+  }
+
   public static AuthorizeAdminRoleResponseDto of(String username, String nickname, List<String> roles) {
     return new AuthorizeAdminRoleResponseDto(
         username,
