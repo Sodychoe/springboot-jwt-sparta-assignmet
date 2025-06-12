@@ -46,7 +46,7 @@ public class JwtIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.username").value(newSignupUserRequest.username()))
-        .andExpect(jsonPath("$.password").exists())
+        .andExpect(jsonPath("$.password").value(newSignupUserRequest.password()))
         .andExpect(jsonPath("$.nickname").value(newSignupUserRequest.nickname()));
 
     // 중복 가입 불가
