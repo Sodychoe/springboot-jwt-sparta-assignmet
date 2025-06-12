@@ -27,6 +27,10 @@ public class User {
     return role.getRole();
   }
 
+  public boolean isAdmin() {
+    return role == UserRole.ADMIN;
+  }
+
   public void authorizeAdminRole() {
     this.role = UserRole.ADMIN;
   }
