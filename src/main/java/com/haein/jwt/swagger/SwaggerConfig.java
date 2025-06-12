@@ -1,16 +1,27 @@
 package com.haein.jwt.swagger;
 
+import com.haein.jwt.controller.exception.CommonErrorResponse;
+import com.haein.jwt.service.exception.ServiceErrorCode;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.examples.Example;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.security.SecurityScheme.In;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 import java.util.Arrays;
+import java.util.List;
+import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @OpenAPIDefinition(
     info = @Info(
@@ -24,6 +35,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
+  private final PasswordEncoder passwordEncoder;
+
+  public SwaggerConfig(PasswordEncoder passwordEncoder) {
+    this.passwordEncoder = passwordEncoder;
+  }
+
   @Bean
   public OpenAPI openAPI() {
     SecurityScheme securityScheme = new SecurityScheme()
@@ -36,4 +53,43 @@ public class SwaggerConfig {
         .security(Arrays.asList(securityRequirement));
   }
 
+  @Bean
+  public OperationCustomizer customizer() {
+    return (operation, handlerMethod) -> {
+      List<ApiErrorResponseExample> apiErrorResponseExamples = Arrays.stream(
+          handlerMethod.getMethod().getAnnotationsByType(ApiErrorResponseExample.class)).toList();
+
+      for (ApiErrorResponseExample example : apiErrorResponseExamples) {
+        if (example != null) {
+          generateErrorResponseExample(operation, example.value());
+        }
+      }
+
+      return operation;
+    };
+  }
+
+  private void generateErrorResponseExample(Operation operation, ServiceErrorCode code) {
+    ApiResponses responses = operation.getResponses();
+
+    Example example = new Example();
+    example.description(code.getMessage());
+    example.setValue(CommonErrorResponse.of(code));
+
+    ExampleHolder exampleHolder = ExampleHolder.builder()
+        .statusCode(code.getStatus())
+        .errorCode(code.name())
+        .errorMessage(code.getMessage())
+        .holder(example)
+        .build();
+
+    Content content = new Content();
+    MediaType mediaType = new MediaType();
+    ApiResponse apiResponse = new ApiResponse();
+
+    mediaType.addExamples(exampleHolder.errorCode(), exampleHolder.holder());
+    content.addMediaType("application/json", mediaType);
+    apiResponse.setContent(content);
+    responses.addApiResponse(String.valueOf(code.getStatus()), apiResponse);
+  }
 }
