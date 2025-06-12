@@ -9,11 +9,11 @@ public record SignupResponseDto(
     String nickname
 ) {
 
-  public static SignupResponseDto from(User user) {
+  public static SignupResponseDto from(User user, String password) {
     return new SignupResponseDto(
         user.getId(),
         user.getUsername(),
-        user.getPassword(),
+        password,
         user.getNickname()
     );
   }

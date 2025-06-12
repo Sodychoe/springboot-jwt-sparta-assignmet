@@ -17,6 +17,12 @@ public record CommonErrorResponse(Error error) {
         new Error(securityErrorCode.getCode(), AUTHENTICATION_FAIL_MESSAGE));
   }
 
+  public static CommonErrorResponse securityErrorResponse() {
+    return new CommonErrorResponse(
+        new Error(SecurityErrorCode.NO_AUTHORIZATION.getCode(),
+            SecurityErrorCode.NO_AUTHORIZATION.getMessage()));
+  }
+
   private record Error(
       String code,
       String message

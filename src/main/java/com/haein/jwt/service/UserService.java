@@ -26,15 +26,16 @@ public class UserService {
       throw ServiceException.from(ServiceErrorCode.USER_ALREADY_EXISTS);
     }
 
+    String password = applicationDto.password();
     User user = User.builder()
         .username(applicationDto.username())
-        .password(passwordEncoder.encode(applicationDto.password()))
+        .password(passwordEncoder.encode(password))
         .nickname(applicationDto.nickname())
         .build();
 
     User savedUser = userRepository.save(user);
 
-    return SignupResponseDto.from(savedUser);
+    return SignupResponseDto.from(savedUser, password);
   }
 
   public LoginResponseDto login(LoginRequestDto dto) {
