@@ -1,6 +1,7 @@
 package com.haein.jwt.controller.dto.response;
 
 import com.haein.jwt.service.dto.response.AuthorizeAdminRoleResponseDto;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public record AuthorizeAdminRoleResponse(
     );
   }
 
+  @Hidden
   private record Role(
       @Schema(description = "권한 이름", example = "ROLE_ADMIN")
       String role

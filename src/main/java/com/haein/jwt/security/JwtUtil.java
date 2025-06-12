@@ -72,7 +72,8 @@ public class JwtUtil {
 
   private String removeTokenPrefix(String token) {
     if (token.startsWith(BEARER_PREFIX)) {
-      return token.substring(BEARER_PREFIX.length());
+      String substring = token.substring(BEARER_PREFIX.length());
+      return substring.replaceAll(" +", "");
     }
 
     throw JwtException.from(SecurityErrorCode.INVALID_PREFIX);
