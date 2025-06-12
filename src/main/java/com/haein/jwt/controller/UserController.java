@@ -5,6 +5,8 @@ import com.haein.jwt.controller.dto.request.SignupRequest;
 import com.haein.jwt.controller.dto.response.LoginResponse;
 import com.haein.jwt.controller.dto.response.SignupResponse;
 import com.haein.jwt.service.UserService;
+import com.haein.jwt.service.exception.ServiceErrorCode;
+import com.haein.jwt.swagger.ApiErrorResponseExample;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -33,6 +35,7 @@ public class UserController {
       schema = @Schema(implementation = SignupResponse.class),
       mediaType = MediaType.APPLICATION_JSON_VALUE
   ))
+  @ApiErrorResponseExample(ServiceErrorCode.USER_ALREADY_EXISTS)
   @PostMapping("/signup")
   public ResponseEntity<SignupResponse> signup(
       @RequestBody
@@ -55,6 +58,8 @@ public class UserController {
       schema = @Schema(implementation = LoginResponse.class),
       mediaType = MediaType.APPLICATION_JSON_VALUE
   ))
+  @ApiErrorResponseExample(value = ServiceErrorCode.USER_NOT_FOUND)
+  @ApiErrorResponseExample(value = ServiceErrorCode.INVALID_CREDENTIALS)
   @PostMapping("/login")
   public ResponseEntity<LoginResponse> login(
       @RequestBody
@@ -66,7 +71,12 @@ public class UserController {
               examples = {
                   @ExampleObject(
                       name = "관리자 아이디로 로그인",
-                      value = "{\"username\": \"admin\", \"password\": \"admin123\"}")
+                      value = "{\"username\": \"admin\", \"password\": \"admin123\"}"
+                  ),
+                  @ExampleObject(
+                      name = "일반 사용자 아이디로 로그인",
+                      value = "{\"username\": \"test1\", \"password\": \"test1234\"}"
+                  )
               }
           )
       )

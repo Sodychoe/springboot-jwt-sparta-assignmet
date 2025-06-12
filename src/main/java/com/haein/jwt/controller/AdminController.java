@@ -1,7 +1,10 @@
 package com.haein.jwt.controller;
 
 import com.haein.jwt.controller.dto.response.AuthorizeAdminRoleResponse;
+import com.haein.jwt.security.SecurityErrorCode;
 import com.haein.jwt.service.AdminService;
+import com.haein.jwt.service.exception.ServiceErrorCode;
+import com.haein.jwt.swagger.ApiErrorResponseExample;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,6 +34,9 @@ public class AdminController {
       schema = @Schema(implementation = AuthorizeAdminRoleResponse.class),
       mediaType = MediaType.APPLICATION_JSON_VALUE
   ))
+  @ApiErrorResponseExample(ServiceErrorCode.USER_NOT_FOUND)
+  @ApiErrorResponseExample(ServiceErrorCode.USER_ALREADY_ADMIN)
+  @ApiErrorResponseExample(ServiceErrorCode.NO_AUTHORIZATION)
   @Parameter(name = "userId", description = "권한을 부여할 사용자의 ID", required = true, example = "2")
   @PatchMapping("/{userId}/roles")
   @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
