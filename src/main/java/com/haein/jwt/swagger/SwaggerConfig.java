@@ -4,6 +4,7 @@ import com.haein.jwt.controller.exception.CommonErrorResponse;
 import com.haein.jwt.service.exception.ServiceErrorCode;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -31,7 +32,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
             + "Bearer 제외하고 뒤에 토큰부분만 복사해서 사용하시면 됩니다  " + "\n"
             + "관리자로 테스트하려면 로그인 Example 에 있는 관리자 아이디로 로그인을 진행하면 됩니다.",
         version = "v1"
-    ))
+    ),
+    servers = @Server(url = "/", description = "avoid CORS")
+)
 @Configuration
 public class SwaggerConfig {
 
